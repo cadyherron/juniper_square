@@ -38,32 +38,27 @@ def create_project():
         resp = jsonify(success=True)
         resp.status_code = 200
         return resp
-#
-#
-# @app.route("/edit_user/<string:uid>", methods=['POST', 'GET'])
-# def edit_user(uid):
-#     if request.method == 'POST':
-#         uname = request.form['uname']
-#         contact = request.form['contact']
-#         con = sql.connect("db_web.db")
-#         cur = con.cursor()
-#         cur.execute("update users set UNAME=?,CONTACT=? where UID=?", (uname, contact, uid))
-#         con.commit()
-#         flash('User Updated', 'success')
-#         return redirect(url_for("index"))
-#     con = sql.connect("db_web.db")
-#     con.row_factory = sql.Row
-#     cur = con.cursor()
-#     cur.execute("select * from users where UID=?", (uid,))
-#     data = cur.fetchone()
-#     return render_template("edit_user.html", datas=data)
-#
-#
-# @app.route("/delete_user/<string:uid>", methods=['GET'])
-# def delete_user(uid):
-#     con = sql.connect("db_web.db")
-#     cur = con.cursor()
-#     cur.execute("delete from users where UID=?", (uid,))
-#     con.commit()
-#     flash('User Deleted', 'warning')
-#     return redirect(url_for("index"))
+
+
+@app.route("/update_project/<id>", methods=['POST', 'GET'])
+def edit_user(id):
+    if request.method == 'POST':
+        name = request.json.get("name")
+        con = sql.connect("db_web.db")
+        cur = con.cursor()
+        cur.execute(f"update projects set name = '{name}' where id = {id}")
+        con.commit()
+        resp = jsonify(success=True)
+        resp.status_code = 200
+        return resp
+
+
+@app.route("/delete_project/<id>", methods=['GET'])
+def delete_user(id):
+    con = sql.connect("db_web.db")
+    cur = con.cursor()
+    cur.execute(f"delete from projects where id = {id}")
+    con.commit()
+    resp = jsonify(success=True)
+    resp.status_code = 200
+    return resp
