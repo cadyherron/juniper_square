@@ -1,11 +1,11 @@
 import json
-import sqlite3 as sql
 from flask import Flask, jsonify, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+from util import execute_query, fetch_rows
+
 app = Flask(__name__)
-# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:postgres@localhost:5432/jsq"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
@@ -17,48 +17,31 @@ def hello_world():
     return {"hi": "there"}
 
 
-@app.route("/projects")
-def index():
-    con = sql.connect("db_web.db")
-    con.row_factory = sql.Row
-    cur = con.cursor()
-    cur.execute("select * from projects")
-    data = cur.fetchall()
-    return json.dumps([{**d} for d in data])
-
-
-@app.route("/create", methods=['POST', 'GET'])
-def create_project():
-    if request.method == 'POST':
+@app.route("/projects", methods=["POST", "GET"])
+def projects():
+    if request.method == "POST":
         name = request.json.get("name")
-        con = sql.connect("db_web.db")
-        cur = con.cursor()
-        cur.execute(f"insert into projects (name) values ('{name}');")
-        con.commit()
+        execute_query(f"INSERT INTO projects (name) VALUES ('{name}');")
         resp = jsonify(success=True)
         resp.status_code = 200
         return resp
+    else:
+        data = fetch_rows("SELECT * FROM projects;")
+        return json.dumps([{**d} for d in data])
 
 
-@app.route("/update_project/<id>", methods=['POST', 'GET'])
-def edit_user(id):
-    if request.method == 'POST':
-        name = request.json.get("name")
-        con = sql.connect("db_web.db")
-        cur = con.cursor()
-        cur.execute(f"update projects set name = '{name}' where id = {id}")
-        con.commit()
-        resp = jsonify(success=True)
-        resp.status_code = 200
-        return resp
+@app.route("/projects/<pid>", methods=["PUT"])
+def update_project(pid):
+    name = request.json.get("name")
+    execute_query(f"UPDATE projects SET name = '{name}' WHERE id = {pid}")
+    resp = jsonify(success=True)
+    resp.status_code = 200
+    return resp
 
 
-@app.route("/delete_project/<id>", methods=['GET'])
-def delete_user(id):
-    con = sql.connect("db_web.db")
-    cur = con.cursor()
-    cur.execute(f"delete from projects where id = {id}")
-    con.commit()
+@app.route("/projects/<pid>", methods=["DELETE"])
+def delete_project(pid):
+    execute_query(f"DELETE FROM projects WHERE id = {pid}")
     resp = jsonify(success=True)
     resp.status_code = 200
     return resp
