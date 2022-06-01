@@ -22,6 +22,7 @@ def projects():
     if request.method == "POST":
         name = request.json.get("name")
         execute_query(f"INSERT INTO projects (name) VALUES ('{name}');")
+        # TODO: should return new object
         resp = jsonify(success=True)
         resp.status_code = 200
         return resp
@@ -34,6 +35,7 @@ def projects():
 def update_project(pid):
     name = request.json.get("name")
     execute_query(f"UPDATE projects SET name = '{name}' WHERE id = {pid}")
+    # TODO: should return dated object
     resp = jsonify(success=True)
     resp.status_code = 200
     return resp

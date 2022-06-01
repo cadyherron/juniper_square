@@ -1,5 +1,6 @@
 # juniper_square
 
+Running locally:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
