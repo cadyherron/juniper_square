@@ -5,6 +5,7 @@ Running locally:
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+python create_db.py  # only run this once
 export FLASK_ENV=development # optional
 flask run
 ````

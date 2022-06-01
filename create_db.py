@@ -9,6 +9,26 @@ sql = '''
         "name" VARCHAR(100)
     )
 '''
+
+# sql = '''
+#     CREATE TABLE "tags" (
+#         "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+#         "text" VARCHAR(100)
+#     )
+# '''
+
+# sql = '''
+#     DROP TABLE IF EXISTS "tags"
+# '''
+
+# sql = '''
+#     CREATE TABLE "tags_to_projects" (
+#         "tag_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+#         "project_id" INTEGER
+#     )
+# '''
+
+
 cur.execute(sql)
 con.commit()
 con.close()
